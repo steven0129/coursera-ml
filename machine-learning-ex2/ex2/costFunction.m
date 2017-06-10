@@ -21,17 +21,15 @@ grad = zeros(size(theta));
 %
 
 temp=0;
-
 for i = 1:m
     h=sigmoid(theta'*X(i, :)');
-    temp=temp+((-y(i))*log(h-(1-y(i)))*log(1-h));
+    temp=temp-y(i)*log(h)-(1-y(i))*log(1-h);
 end
 
 J=1/m*temp;
 
-temp=0;
-
 for j = 1:size(theta)
+    temp=0;
     for i = 1:m
         h=sigmoid(theta'*X(i, :)');
         temp=temp+(h-y(i))*X(i, j);
@@ -39,7 +37,6 @@ for j = 1:size(theta)
     
     grad(j)=1/m*temp;
 end
-
 % =============================================================
 
 end
