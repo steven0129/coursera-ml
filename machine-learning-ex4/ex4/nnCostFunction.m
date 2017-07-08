@@ -62,23 +62,59 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% 進行y value向量化
+vecY=zeros(m, num_labels);
+for i = 1:m
+    vecY(i, y(i))=1;
+end
 
+% 計算h值
+a1=[ones(m, 1) X];
 
+z2=a1*Theta1';
+a2=sigmoid(z2);
+a2=[ones(size(a2, 1), 1) a2];
 
+z3=a2*Theta2';
+a3=sigmoid(z3);
 
+h=a3;
 
+% coupute cost function
+J= 1/m * sum( sum( -vecY .* log(h) - (1-vecY) .* log(1-h) ) );
+regularization= lambda/(2*m) * ( sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)) );
+J=J + regularization;
 
+% 計算grad
+for i= 1:m
+    % input layer
+    a1=[1; X(i, :)'];
 
+    % hidden layer
+    z2=Theta1 * a1;
+    a2=[1; sigmoid(z2)];
 
+    z3=Theta2 * a2;
+    a3=sigmoid(z3);
 
+    yy=([1:num_labels]==y(i))';
 
+    % delta value
+    delta3=a3-yy;
+    delta2=(Theta2' * delta3) .* [1; sigmoidGradient(z2)];
+    delta2=delta2(2:end);
+    
+    % delata update
+    Theta1_grad=Theta1_grad + delta2 * a1';
+    Theta2_grad=Theta2_grad + delta3 * a2';
+end
 
+% update Theta
+Theta1_grad=(1/m) * Theta1_grad;
+Theta2_grad=(1/m) * Theta2_grad;
 
-
-
-
-
-
+% Theta1_grad=(1/m) * Theta1_grad + (lambda/m) * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)];
+% Theta2_grad=(1/m) * Theta2_grad + (lambda/m) * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)];
 
 % -------------------------------------------------------------
 
